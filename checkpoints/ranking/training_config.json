@@ -1,0 +1,46 @@
+{
+  "relevance_label": "activity_level_0to3",
+  "label_thresholds_um": {
+    "3_strong": "IC50 < 50",
+    "2_moderate": "50 <= IC50 <= 200",
+    "1_weak": "200 < IC50 <= 1000",
+    "0_inactive": "IC50 > 1000"
+  },
+  "sample_weight": {
+    "3": 3.0,
+    "2": 2.0,
+    "1": 1.0,
+    "0": 0.5
+  },
+  "min_source_group_size": 4,
+  "lightgbm_params": {
+    "objective": "lambdarank",
+    "metric": "ndcg",
+    "ndcg_eval_at": [
+      5,
+      10
+    ],
+    "learning_rate": 0.05,
+    "num_leaves": 63,
+    "min_data_in_leaf": 1,
+    "max_depth": 6,
+    "feature_fraction": 0.8,
+    "bagging_fraction": 0.8,
+    "bagging_freq": 5,
+    "verbose": -1,
+    "seed": 42
+  },
+  "num_boost_round": 300,
+  "n_train_groups": 35,
+  "n_train_samples": 320,
+  "held_out_metrics_same_source_n_ge_4": {
+    "full_SCC": 0.06984172942935452,
+    "within_pair_n2": 0.5757575757575758,
+    "n4_SCC": 0.6812848750761226,
+    "n4_within_pair": 0.6617647058823529,
+    "n4_samples": 25,
+    "n4_groups": 4
+  },
+  "note": "Primary ranking metric = same-literature within-group, especially sources with n>=4 IC50 entries. Global cross-source SCC is NOT the design target.",
+  "rank_score_normalization": "rank_score = sigmoid(raw_lambdarank_margin / 2.0)"
+}

@@ -1,0 +1,13 @@
+# Extra dependencies for real ESM-2 embeddings (the source-aware LambdaRank
+# ranking head uses 617-D sequence features + 480-D ESM-2 features). These
+# are only required for:
+#   - full_ranking_predict.py (batch CLI scoring)
+#   - reproduce_results.py (ranking-metrics section)
+#   - the web app's "use real ESM-2" path
+#
+# Without these, the pipeline still runs in classification-only mode with
+# the ESM-2 block zero-padded (an approximation, not the reported ranking
+# numbers).
+-r requirements.txt
+torch>=2.0
+transformers>=4.30
