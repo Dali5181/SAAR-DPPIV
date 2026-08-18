@@ -164,39 +164,6 @@ is part of the deployed model.
   `src/models/ranking_lambdarank.py` section 4 and
   `src/evaluation/ablation.py::topk_enrichment_metrics`.
 
-## Answers to specific review questions
-
-**What does LambdaRank use as its label / relevance grade?**
-Not raw pIC50. Each IC50-labelled peptide is discretised into one of four
-ordinal activity levels (3 = IC50 < 50 uM ... 0 = IC50 > 1000 uM), with a
-per-level sample weight favouring the high-activity end. Full spec, code,
-and rationale: `src/models/ranking_lambdarank.py`.
-
-**How is RankScore normalised to [0, 1]?**
-`RankScore = sigmoid(raw_lambdarank_margin / T)`, `T = 2.0` (fixed
-temperature, not a percentile/rank transform -- the mapping is monotonic
-and deterministic for a given trained model). Same reference:
-`src/models/ranking_lambdarank.py`, function `sigmoid_rank_score`.
-
-**Which 0.65 / 0.35 combination was tested, and on what basis was it selected?**
-A full grid search over `w in {0.00, 0.05, ..., 1.00}` for
-`Combined_Score = (1-w) * P(active) + w * RankScore` was run on the strict
-source-disjoint test split, tracking EF@5, NDCG@10, and PairAcc
-(`src/benchmark_comparison/run_saar_weight_grid_0720.py`, output
-`SAAR_DPPIV_weight_grid_0720.csv`). No materially better weight than 0.35
-was found; 0.35 was kept as the deployed default.
-
-**How are the ranking train/validation/test groups split by source (i.e. is there source leakage)?**
-LightGBM's ranking "group" = all peptides sharing the same normalised
-literature source string; LambdaRank only ever compares two peptides
-within the same group, so it never compares IC50s measured under different
-assay conditions. Training additionally requires >=4 peptides per source
-group, and only uses the IC50 subset of the classification TRAIN split.
-The manuscript's headline Top-k enrichment numbers instead use a fully
-source-disjoint split (zero shared literature sources between train and
-test) from a separate, larger IC50 collection -- see
-`src/models/ranking_lambdarank.py` section 2 and
-`src/benchmark_comparison/run_source_grouped_ranking_0714.py`.
 
 ## Data
 
